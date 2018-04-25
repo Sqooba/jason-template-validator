@@ -1,0 +1,24 @@
+{
+  "push_antrag": {
+    "wisi0061": {
+      "vtrg" : {
+        "pol_nr":"",
+        "mand_cdu":"",
+        "eingesetzt":"",
+        "v_prod_cdu":"",
+        "vv_g_std": {
+          "vbsi_id": ""
+        },
+        "antrg_zus": {
+          "angbt_uuid": "",
+          "antrg_stat_cdu": "",
+          "antrg_aktn_cdopc": "",
+          "antrg_stat_nach": {
+            "antrg_stat_cdu": ""
+          }
+        }
+      }
+    }
+  }
+}
+
