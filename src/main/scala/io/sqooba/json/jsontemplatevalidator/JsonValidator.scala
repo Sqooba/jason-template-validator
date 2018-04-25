@@ -29,7 +29,7 @@ class JsonValidator(templateJson: JsonNode) {
 
   def getTemplateJson(): JsonNode = templateJson
 
-  def asJava(): new JsonValidatorForJava(this)
+  def asJava(): JsonValidatorForJava = new JsonValidatorForJava(this)
 }
 
 object JsonValidator {
