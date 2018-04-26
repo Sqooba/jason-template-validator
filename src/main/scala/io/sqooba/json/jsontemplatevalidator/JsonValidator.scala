@@ -2,6 +2,7 @@ package io.sqooba.json.jsontemplatevalidator
 
 import scala.collection.JavaConverters._
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.node.{JsonNodeType, ObjectNode}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 
@@ -25,7 +26,13 @@ class JsonValidator(templateJson: JsonNode) {
     validateJsonAgainstFields(json, templateJson)
   }
 
-  def validateJson(json: String): Boolean = validateJson(mapper.readTree(json))
+  def validateJson(json: String): Boolean = {
+    try {
+      validateJson(mapper.readTree(json))
+    } catch {
+      case jpe: JsonParseException => false
+    }
+  }
 
   def getTemplateJson(): JsonNode = templateJson
 
@@ -51,7 +58,11 @@ object JsonValidator {
   }
 
   def forTemplateJson(json: String): JsonValidator = {
-    val asJson = mapper.readTree(json)
-    new JsonValidator(asJson)
+    try {
+      val asJson = mapper.readTree(json)
+      new JsonValidator(asJson)
+    } catch {
+      case jpe: JsonParseException => throw new IllegalArgumentException("Invalid json template given, can't be parsed.")
+    }
   }
 }
