@@ -53,5 +53,4 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
     val validator = JsonValidator.forTemplateJson(json1)
     validator.validateJson(nonJson) shouldBe false
   }
-  // invalid json is false
 }

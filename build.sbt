@@ -1,6 +1,6 @@
 organization := "io.sqooba.json"
 scalaVersion := "2.12.5"
-version      := "0.2.0-SNAPSHOT"
+version      := "0.2.1-SNAPSHOT"
 name         := "json-template-validator"
 
 libraryDependencies ++= Seq(
@@ -14,8 +14,8 @@ libraryDependencies ++= Seq(
 
 excludeDependencies ++= Seq("org.slf4j" % "slf4j-log4j12", "log4j" % "log4j")
 
-val artUser = sys.env.get("ARTIFACTORY_USER").getOrElse("")
-val artPass = sys.env.get("ARTIFACTORY_PASSWORD").getOrElse("")
+val artUser = sys.env.get("ARTIFACTORY_CREDS_USR").getOrElse("")
+val artPass = sys.env.get("ARTIFACTORY_CREDS_PSW").getOrElse("")
 
 credentials += Credentials("Artifactory Realm", "artifactory-v2.sqooba.io", artUser, artPass)
 
