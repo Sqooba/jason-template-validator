@@ -7,7 +7,7 @@ class DotNotationSpec extends FlatSpec with Matchers {
 
   val mapper = new ObjectMapper()
 
-  "dot notation creator" should "create validator for 1 line " ignore {
+  "dot notation creator" should "create validator for 1 line " in {
     val dotNot = "push_antrag.wisi0061.vtrg.pol_nr"
     val validator = JsonValidator.forDotNotation(dotNot)
 
