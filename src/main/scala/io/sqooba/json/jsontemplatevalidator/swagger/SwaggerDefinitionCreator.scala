@@ -10,15 +10,16 @@ object SwaggerDefinitionCreator {
 
 	lazy val mapper: ObjectMapper = new ObjectMapper()
 
-	def createTypeDef(node: JsonNode): JsonNode = {
-
+	def createProperties(node: JsonNode): JsonNode = {
 		val fields: List[String] = node.fieldNames().asScala.toList
-		val rootJson = mapper.createObjectNode()
 		val properties = mapper.createObjectNode()
 		fields.foreach(f => {
 			val fieldObject = mapper.createObjectNode()
 			val obj = node.get(f)
-			if (obj.canConvertToLong) {
+			if (obj.isObject) {
+				fieldObject.put("type", "object")
+				fieldObject.set("properties", createProperties(obj))
+			} else if (obj.canConvertToLong) {
 				fieldObject.put("type:", "number")
 			} else if(Try(obj.toString.toBoolean).getOrElse(false)) {
 				fieldObject.put("type:", "boolean")
@@ -27,8 +28,13 @@ object SwaggerDefinitionCreator {
 			}
 			properties.set(f.toString, fieldObject)
 		})
+		properties
+	}
+
+	def createTypeDef(node: JsonNode): JsonNode = {
+		val rootJson = mapper.createObjectNode()
 		rootJson.put("type", "object")
-		rootJson.set("properties", properties)
+		rootJson.set("properties", createProperties(node))
 		rootJson.asInstanceOf[JsonNode]
 	}
 
@@ -40,21 +46,4 @@ object SwaggerDefinitionCreator {
 			case ex: JsonParseException => throw new IllegalArgumentException("Cannot parse given json, invalid format.")
 		}
 	}
-
 }
-/*
-{
-  "type":"object",
-  "properties":{
-    "id":{
-      "type":"integer"
-    },
-    "desc":{
-      "type":"string"
-    },
-    "contractType":{
-      "type":"string"
-    }
-  }
-}
- */

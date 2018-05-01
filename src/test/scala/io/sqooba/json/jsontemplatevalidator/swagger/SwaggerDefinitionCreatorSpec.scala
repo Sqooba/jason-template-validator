@@ -24,6 +24,13 @@ class SwaggerDefinitionCreatorSpec extends FlatSpec with Matchers {
       	"valid": true
   	}""".stripMargin
 
+	val nestedJson =
+		s"""{
+  			"id": "5",
+    		"desc": "this is desc",
+      	"nested": $json
+  	}""".stripMargin
+
 	"createTypeDef" should "create type def json string" in {
 		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(json)
 		res shouldBe a [JsonNode]
@@ -56,4 +63,9 @@ class SwaggerDefinitionCreatorSpec extends FlatSpec with Matchers {
 		}
 	}
 
+	it should "parse also nested json" in {
+		println(s"nest: $nestedJson")
+		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(nestedJson)
+		println(res.toString)
+	}
 }
