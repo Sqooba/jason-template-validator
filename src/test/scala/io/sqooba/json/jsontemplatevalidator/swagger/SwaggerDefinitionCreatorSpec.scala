@@ -49,4 +49,11 @@ class SwaggerDefinitionCreatorSpec extends FlatSpec with Matchers {
 		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type:\":\"number\"},\"desc\":{\"type:\":\"string\"},\"valid\":{\"type:\":\"boolean\"}}}"
 	}
 
+	it should "throw illegal argument if invalid json" in {
+		val invalidJsonString = "{this is not json: blaa}"
+		assertThrows[IllegalArgumentException] {
+			SwaggerDefinitionCreator.createTypeDef(invalidJsonString)
+		}
+	}
+
 }

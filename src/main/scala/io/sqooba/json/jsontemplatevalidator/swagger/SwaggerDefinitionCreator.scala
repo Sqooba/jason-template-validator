@@ -3,6 +3,7 @@ package io.sqooba.json.jsontemplatevalidator.swagger
 import scala.collection.JavaConverters._
 import scala.util.Try
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 
 object SwaggerDefinitionCreator {
@@ -32,8 +33,12 @@ object SwaggerDefinitionCreator {
 	}
 
 	def createTypeDef(json: String): JsonNode = {
-		val asJson = mapper.readTree(json)
-		createTypeDef(asJson)
+		try {
+			val asJson = mapper.readTree(json)
+			createTypeDef(asJson)
+		} catch {
+			case ex: JsonParseException => throw new IllegalArgumentException("Cannot parse given json, invalid format.")
+		}
 	}
 
 }
