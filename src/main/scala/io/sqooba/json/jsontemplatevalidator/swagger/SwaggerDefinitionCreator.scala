@@ -20,11 +20,11 @@ object SwaggerDefinitionCreator {
 				fieldObject.put("type", "object")
 				fieldObject.set("properties", createProperties(obj))
 			} else if (obj.canConvertToLong) {
-				fieldObject.put("type:", "number")
+				fieldObject.put("type", "number")
 			} else if(Try(obj.toString.toBoolean).getOrElse(false)) {
-				fieldObject.put("type:", "boolean")
+				fieldObject.put("type", "boolean")
 			} else {
-				fieldObject.put("type:", "string")
+				fieldObject.put("type", "string")
 			}
 			properties.set(f.toString, fieldObject)
 		})
