@@ -1,6 +1,6 @@
 organization := "io.sqooba"
 scalaVersion := "2.12.5"
-version      := "0.2.2"
+version      := "0.3.0"
 name         := "json-template-validator"
 
 libraryDependencies ++= Seq(
