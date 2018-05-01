@@ -34,26 +34,26 @@ class SwaggerDefinitionCreatorSpec extends FlatSpec with Matchers {
 	"createTypeDef" should "create type def json string" in {
 		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(json)
 		res shouldBe a [JsonNode]
-		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type:\":\"string\"},\"desc\":{\"type:\":\"string\"}}}"
+		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"desc\":{\"type\":\"string\"}}}"
 	}
 
 	it should "create type def jsonNode" in {
 		val mapper = new ObjectMapper()
 		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(mapper.readTree(json))
 		res shouldBe a [JsonNode]
-		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type:\":\"string\"},\"desc\":{\"type:\":\"string\"}}}"
+		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\"},\"desc\":{\"type\":\"string\"}}}"
 	}
 
 	it should "create number for number type" in {
 		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(jsonWithNumber)
 		res shouldBe a [JsonNode]
-		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type:\":\"number\"},\"desc\":{\"type:\":\"string\"}}}"
+		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"number\"},\"desc\":{\"type\":\"string\"}}}"
 	}
 
 	it should "create boolean for boolean type" in {
 		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(jsonWithBoolean)
 		res shouldBe a [JsonNode]
-		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type:\":\"number\"},\"desc\":{\"type:\":\"string\"},\"valid\":{\"type:\":\"boolean\"}}}"
+		res.toString shouldBe "{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"number\"},\"desc\":{\"type\":\"string\"},\"valid\":{\"type\":\"boolean\"}}}"
 	}
 
 	it should "throw illegal argument if invalid json" in {
@@ -64,8 +64,7 @@ class SwaggerDefinitionCreatorSpec extends FlatSpec with Matchers {
 	}
 
 	it should "parse also nested json" in {
-		println(s"nest: $nestedJson")
 		val res: JsonNode = SwaggerDefinitionCreator.createTypeDef(nestedJson)
-		println(res.toString)
+		res shouldBe a [JsonNode]
 	}
 }
