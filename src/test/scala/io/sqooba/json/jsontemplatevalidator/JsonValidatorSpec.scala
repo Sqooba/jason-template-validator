@@ -7,6 +7,10 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
   val json1 = """{ "id": 5, "desc":"someval" }"""
   val json2 = """{ "id": 5, "desc":"someval", "other":"optional" }"""
   val json3 = """{ "id": 1, "desc":"other", "otherother":"optional" }"""
+  val arrayJson = """{ "id": 1, "arrayVal": ["string"] }"""
+
+  val invalidArrayJson = """{ "id": 1, "arrayVal": "string" }"""
+
   val nonJson = "someother string:{id:[],}"
 
   val invalidJson1 = """{ "desc":"someval", "other":"optional" }"""
@@ -52,5 +56,15 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
   "JsonValidator" should "return false for invalid json format" in {
     val validator = JsonValidator.forTemplateJson(json1)
     validator.validateJson(nonJson) shouldBe false
+  }
+
+  "JsonValidator" should "return true for valid array" in {
+    val validator = JsonValidator.forTemplateJson(arrayJson)
+    validator.validateJson(arrayJson) shouldBe true
+  }
+
+  "JsonValidator" should "return false for field that is not an array" in {
+    val validator = JsonValidator.forTemplateJson(arrayJson)
+    validator.validateJson(invalidArrayJson) shouldBe false
   }
 }

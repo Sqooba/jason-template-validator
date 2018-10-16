@@ -16,6 +16,8 @@ class JsonValidator(templateJson: JsonNode) {
       val nt = subTemplateJson.get(field).getNodeType
       if (nt == JsonNodeType.OBJECT) {
         json.has(field) && json.get(field) != null && validateJsonAgainstFields(json.get(field), subTemplateJson.get(field))
+      } else if (nt == JsonNodeType.ARRAY) {
+        json.has(field) && json.get(field).isArray && json.get(field) != null
       } else {
         json.has(field) && json.get(field) != null
       }
