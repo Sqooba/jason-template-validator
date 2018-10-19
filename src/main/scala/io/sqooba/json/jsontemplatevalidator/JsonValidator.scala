@@ -1,6 +1,7 @@
 package io.sqooba.json.jsontemplatevalidator
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable.ListBuffer
 
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.node.{JsonNodeType, ObjectNode}
@@ -11,17 +12,37 @@ class JsonValidator(templateJson: JsonNode) {
   lazy val mapper: ObjectMapper = new ObjectMapper()
 
   private def validateJsonAgainstFields(json: JsonNode, subTemplateJson: JsonNode): Boolean = {
+
     val fields = subTemplateJson.fieldNames().asScala
-    fields.forall(field => {
-      val nt = subTemplateJson.get(field).getNodeType
-      if (nt == JsonNodeType.OBJECT) {
-        json.has(field) && json.get(field) != null && validateJsonAgainstFields(json.get(field), subTemplateJson.get(field))
-      } else if (nt == JsonNodeType.ARRAY) {
-        json.has(field) && json.get(field).isArray && json.get(field) != null
+
+    if (subTemplateJson.isArray) {
+      if (subTemplateJson.has(0)) {
+        val itemTemplate = subTemplateJson.get(0)
+        if (json.isArray && json.has(0)) {
+          val results = ListBuffer[Boolean]()
+          json.forEach(item => {
+            val res = validateJsonAgainstFields(item, itemTemplate)
+            results.append(res)
+          })
+          results.forall(x => x)
+        } else {
+          false
+        }
       } else {
-        json.has(field) && json.get(field) != null
+        json.isArray
       }
-    })
+    } else {
+      fields.forall(field => {
+        val nt = subTemplateJson.get(field).getNodeType
+        if (nt == JsonNodeType.OBJECT) {
+          json.has(field) && json.get(field) != null && validateJsonAgainstFields(json.get(field), subTemplateJson.get(field))
+        } else if (nt == JsonNodeType.ARRAY) {
+          json.has(field) && json.get(field).isArray && json.get(field) != null && validateJsonAgainstFields(json.get(field), subTemplateJson.get(field))
+        } else {
+          json.has(field) && json.get(field) != null
+        }
+      })
+    }
   }
 
   def validateJson(json: JsonNode): Boolean = {

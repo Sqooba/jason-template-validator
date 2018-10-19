@@ -9,6 +9,10 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
   val json3 = """{ "id": 1, "desc":"other", "otherother":"optional" }"""
   val arrayJson = """{ "id": 1, "arrayVal": ["string"] }"""
 
+  val jsonWithJsonInArray = """{ "id": 1, "arrayVal": [{"key":"key", "value":"value"}] }"""
+
+  val jsonWithEmptyArray = """{ "id": 1, "arrayVal": [] }"""
+
   val invalidArrayJson = """{ "id": 1, "arrayVal": "string" }"""
 
   val nonJson = "someother string:{id:[],}"
@@ -19,7 +23,8 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
   val nestedJson1 = """{ "id": 5, "desc":"someval", "tree": { "nested1":"nestedval" } }"""
   val nestedJson2 = """{ "id": 5, "desc":"someval", "tree": { "nested1":"nestedval", "nested2":"nestedval" } }"""
   val invalidNestedJson = """{ "id": 5, "desc":"someval", "tree": { "nested2":"nestedval" } }"""
-
+  val simpleArray = """ [{"key":"key", "value":"value"}] """
+  val simpleWrongArray = """ [{"key":"key", "value":"value"}, { "perse" : "arse" } ] """
 
   "JsonValidator" should "create a validator based on json" in {
     JsonValidator.forTemplateJson(json1) shouldBe a [JsonValidator]
@@ -66,5 +71,40 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
   "JsonValidator" should "return false for field that is not an array" in {
     val validator = JsonValidator.forTemplateJson(arrayJson)
     validator.validateJson(invalidArrayJson) shouldBe false
+  }
+
+  "JsonValidator" should "check items inside array aswell" in {
+    val validator = JsonValidator.forTemplateJson(jsonWithJsonInArray)
+    validator.validateJson(arrayJson) shouldBe false
+  }
+
+  "JsonValidator" should "check empty array" in {
+    val validator = JsonValidator.forTemplateJson("[]")
+    validator.validateJson("[]") shouldBe true
+  }
+
+  "JsonValidator" should "check items inside array as well" in {
+    val validator = JsonValidator.forTemplateJson(simpleArray)
+    validator.validateJson(simpleArray) shouldBe true
+  }
+
+  "JsonValidator" should "check for inconsistent items inside array" in {
+    val validator = JsonValidator.forTemplateJson(simpleArray)
+    validator.validateJson(simpleWrongArray) shouldBe false
+  }
+
+  "JsonValidator" should "reject empty array" in {
+    val validator = JsonValidator.forTemplateJson(simpleArray)
+    validator.validateJson("[]") shouldBe false
+  }
+
+  "JsonValidator" should "check items inside array as well, reject empty array" in {
+    val validator = JsonValidator.forTemplateJson(jsonWithJsonInArray)
+    validator.validateJson(jsonWithEmptyArray) shouldBe false
+  }
+
+  "JsonValidator" should "check item is an array as well, accept empty array" in {
+    val validator = JsonValidator.forTemplateJson(jsonWithEmptyArray)
+    validator.validateJson(jsonWithEmptyArray) shouldBe true
   }
 }
