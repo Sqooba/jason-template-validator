@@ -3,4 +3,7 @@ Create validator based on a json. Validates further json based on having same fi
 ```
     val validator = JsonValidator.forTemplateJson(someJsonAsString)
     val isValid: Boolean = validator.validateJson(someJson)
+    
+    
+    
 ```
