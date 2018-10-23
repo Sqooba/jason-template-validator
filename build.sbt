@@ -9,7 +9,8 @@ libraryDependencies ++= Seq(
   "ch.qos.logback"              %   "logback-classic"         % "1.2.3",
   "com.typesafe.scala-logging"  %%  "scala-logging"           % "3.7.2",
   "org.scalatest"               %%  "scalatest"               % "3.0.4"             % Test,
-  "org.mockito"                 %   "mockito-all"             % "1.10.19"           % Test
+  "org.mockito"                 %   "mockito-all"             % "1.10.19"           % Test,
+  "com.github.java-json-tools"  %   "json-schema-validator"   % "2.2.10"            % Test
 )
 
 excludeDependencies ++= Seq("org.slf4j" % "slf4j-log4j12", "log4j" % "log4j")

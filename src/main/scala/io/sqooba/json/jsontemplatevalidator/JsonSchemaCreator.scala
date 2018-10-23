@@ -1,18 +1,13 @@
 package io.sqooba.json.jsontemplatevalidator
 
 import java.util
-import java.util.Iterator
 
-import com.fasterxml.jackson.databind.node.{JsonNodeType, ObjectNode, TextNode}
+import com.fasterxml.jackson.databind.node._
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import io.sqooba.json.jsontemplatevalidator.JsonValidator.mapper
-
 import scala.collection.JavaConverters._
 
 object JsonSchemaCreator extends App {
-
   println(s"perse: ${args.length}")
-
 }
 
 
@@ -25,65 +20,51 @@ class JsonSchemaCreator() {
     createSchemaFor(json)
   }
 
-  /*
-BINARY,
-BOOLEAN,
-MISSING,
-NULL,
-NUMBER,
-OBJECT,
-POJO,
-STRING
-  */
-  def createSchemaFor(json: JsonNode): JsonNode = {
+  def createSchemaFor(json: JsonNode, isRoot: Boolean = true): JsonNode = {
     json.getNodeType match {
       case JsonNodeType.ARRAY => json
       case JsonNodeType.OBJECT => {
         val on = mapper.createObjectNode
+        if (isRoot) {
+          on.set("$schema", new TextNode("http://json-schema.org/draft-07/schema#"))
+        }
         on.set("type", new TextNode("object"))
-        on.set("properties",  mapper.createObjectNode)
-        // on.set("properties", recursiveSchema(json, on))
+        on.set("properties", parseProperties(json))
       }
+      //case JsonNodeType.STRING => new TextNode("string")
+      //case JsonNodeType.NUMBER => new TextNode("number")
+      case _ => new TextNode(json.getNodeType.toString.toLowerCase)
     }
   }
 
-  def recursiveSchema(json: JsonNode, schema: ObjectNode): JsonNode = {
+  def createTypeNode(typeString: String): ObjectNode = {
+    val on = mapper.createObjectNode()
+    on.set("type", new TextNode(typeString))
+    on
+  }
+
+  def parseProperties(json: JsonNode): JsonNode = {
+    val schema = mapper.createObjectNode()
     val fields: util.Iterator[util.Map.Entry[String, JsonNode]] = json.asInstanceOf[ObjectNode].fields()
     val fieldList = fields.asScala.toList
-    println(fieldList)
-    schema
-
-    /*
     fieldList.foreach(field => {
       val key = field.getKey
       val nodeType = field.getValue.getNodeType
-      schema.put(key, nodeType.toString.toLowerCase)
-    })
-
-    json.forEach(f => {
-
-      f.getNodeType match {
-        case JsonNodeType.ARRAY => json
-        case JsonNodeType.OBJECT => {
-          val on = mapper.createObjectNode
-          on.set("type", new TextNode("object"))
-          recursiveSchema(json, on)
-        }
-        case JsonNodeType.STRING => {
-
-          val f1 = f.get(0)
-          println(f1)
-          schema.set("nice", new TextNode("nice"))
-        }
-        case JsonNodeType.NUMBER => {
-          val f1 = f.asText()
-          println(f1)
-          schema.set("nice", new TextNode("nice"))
-        }
+      val typeNode = createTypeNode(nodeType.toString.toLowerCase)
+      if (field.getValue.getNodeType == JsonNodeType.OBJECT) {
+        typeNode.set("properties", parseProperties(field.getValue))
+      } else if (field.getValue.getNodeType == JsonNodeType.ARRAY) {
+        typeNode.set("items", parseItemsFromList(field.getValue.asInstanceOf[ArrayNode]))
       }
+      schema.set(key, typeNode)
     })
     schema
-    */
   }
+
+  def parseItemsFromList(jsonArray: ArrayNode): JsonNode = {
+    val item = jsonArray.get(0)
+    createSchemaFor(item, false)
+  }
+
 }
 
