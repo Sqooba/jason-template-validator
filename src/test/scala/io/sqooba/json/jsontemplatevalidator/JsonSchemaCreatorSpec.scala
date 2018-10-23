@@ -13,7 +13,7 @@ class JsonSchemaCreatorSpec extends FlatSpec with Matchers {
   "JsonSchemaCreator" should "create schema" in {
     val simpleJson = """{ "id": 1 }"""
     val jsonSchema = creator.createSchemaFor(simpleJson)
-    // println(s"schema: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonSchema)}")
+    println(s"schema: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(jsonSchema)}")
     jsonSchema.get("type").asText() shouldBe "object"
     // val propList = jsonSchema.get("properties").fieldNames().asScala.toList
     // propList.length shouldBe 1
