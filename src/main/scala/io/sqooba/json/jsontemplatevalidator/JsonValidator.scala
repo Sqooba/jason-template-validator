@@ -20,7 +20,7 @@ class JsonValidator(templateJson: JsonNode) {
         val itemTemplate = subTemplateJson.get(0)
         if (json.isArray && json.has(0)) {
           val results = ListBuffer[Boolean]()
-          json.forEach(item => {
+          json.asScala.foreach(item => {
             val res = validateJsonAgainstFields(item, itemTemplate)
             results.append(res)
           })

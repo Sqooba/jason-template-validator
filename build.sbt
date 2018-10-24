@@ -1,5 +1,5 @@
 organization := "io.sqooba"
-scalaVersion := "2.12.5"
+scalaVersion := "2.12.7"
 version      := "0.3.2"
 name         := "json-template-validator"
 
@@ -20,7 +20,7 @@ val artPass = sys.env.get("ARTIFACTORY_CREDS_PSW").getOrElse("")
 
 credentials += Credentials("Artifactory Realm", "artifactory-v2.sqooba.io", artUser, artPass)
 
-crossScalaVersions := Seq("2.12.5", "2.11.12")
+crossScalaVersions := Seq("2.12.7", "2.11.12")
 
 publishTo := {
   val realm = "Artifactory Realm"
