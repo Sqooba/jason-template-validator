@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import scala.collection.JavaConverters._
 
 object JsonSchemaCreator extends App {
-  println(s"perse: ${args.length}")
+  // todo
 }
 
 
