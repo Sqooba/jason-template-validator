@@ -107,4 +107,27 @@ class JsonValidatorSpec extends FlatSpec with Matchers {
     val validator = JsonValidator.forTemplateJson(jsonWithEmptyArray)
     validator.validateJson(jsonWithEmptyArray) shouldBe true
   }
+
+  "JsonValidator" should "check and log missing field" in {
+    val validator = JsonValidator.forTemplateJson(json1)
+    validator.validateJson(invalidJson1) shouldBe false
+    validator.getLatestErrors() should contain ("id")
+  }
+
+  "JsonValidator" should "check and log all missing fields" in {
+    val validator = JsonValidator.forTemplateJson(json1)
+    validator.validateJson(invalidJson2) shouldBe false
+    val errors: Set[String] = validator.getLatestErrors()
+    errors should contain allOf ("id", "desc")
+  }
+
+  "JsonValidator" should "check and log missing field and reset for next run" in {
+    val validator = JsonValidator.forTemplateJson(json1)
+    validator.validateJson(invalidJson1) shouldBe false
+    validator.getLatestErrors() should contain ("id")
+
+    validator.validateJson(json1) shouldBe true
+    validator.getLatestErrors() shouldBe empty
+  }
+
 }
