@@ -1,6 +1,7 @@
 package io.sqooba.json.jsontemplatevalidator
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 import com.fasterxml.jackson.core.JsonParseException
@@ -10,6 +11,10 @@ import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 class JsonValidator(templateJson: JsonNode) {
 
   lazy val mapper: ObjectMapper = new ObjectMapper()
+
+  var errorsSet: mutable.Set[String] = mutable.Set()
+
+  def getLatestErrors(): Set[String] = errorsSet.toSet
 
   private def validateJsonAgainstFields(json: JsonNode, subTemplateJson: JsonNode): Boolean = {
 
@@ -32,8 +37,12 @@ class JsonValidator(templateJson: JsonNode) {
         json.isArray
       }
     } else {
-      fields.forall(field => {
+      val isValid: List[Boolean] = fields.map(field => {
         val nt = subTemplateJson.get(field).getNodeType
+        if (!json.has(field)) {
+          errorsSet.add(field)
+        }
+
         if (nt == JsonNodeType.OBJECT) {
           json.has(field) && json.get(field) != null && validateJsonAgainstFields(json.get(field), subTemplateJson.get(field))
         } else if (nt == JsonNodeType.ARRAY) {
@@ -41,11 +50,15 @@ class JsonValidator(templateJson: JsonNode) {
         } else {
           json.has(field) && json.get(field) != null
         }
-      })
+      }).toList
+
+      // we do this separately so all errors are logged
+      isValid.forall(x => x)
     }
   }
 
   def validateJson(json: JsonNode): Boolean = {
+    errorsSet = mutable.Set[String]() // reset errors
     validateJsonAgainstFields(json, templateJson)
   }
 
